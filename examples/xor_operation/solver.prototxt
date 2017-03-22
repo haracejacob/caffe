@@ -1,0 +1,20 @@
+net: "xor_net.prototxt"
+
+test_iter: 10
+test_interval: 500
+
+base_lr: 0.09 
+lr_policy: "step"
+gamma: 0.1
+stepsize: 100
+
+display: 1000
+max_iter: 10000
+snapshot: 5000
+snapshot_prefix: "snapshot"
+
+momentum: 0.9
+weight_decay: 0.0005
+
+solver_mode: CPU # or GPU
+

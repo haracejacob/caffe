@@ -1,0 +1,21 @@
+net: "iris_dropout.prototxt" 
+
+test_iter: 0
+test_interval: 2000
+
+base_lr: 0.09 
+lr_policy: "step"
+gamma: 0.5
+stepsize: 100
+
+display: 100
+max_iter: 10000
+snapshot: 5000
+snapshot_prefix: "snapshot_dropout"
+
+momentum: 0.9
+weight_decay: 0.0005
+
+solver_mode: CPU # or GPU
+
+

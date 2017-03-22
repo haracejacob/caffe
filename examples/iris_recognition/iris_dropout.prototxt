@@ -1,0 +1,112 @@
+name: "SIMPLE_IRIS_NET"
+layer {
+  name: "data"
+  type: "HDF5Data"
+  top: "data"
+  top: "label"
+  hdf5_data_param {
+    source: "iris_data.filelist.txt"
+    batch_size: 150
+  }
+}
+layer {
+  name: "fc1"
+  type: "InnerProduct"
+  bottom: "data"
+  top: "fc1"
+  inner_product_param {
+    num_output: 200 # We need to have some positive and some negative initial weights with high probability
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "xavier"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "fc1"
+  top: "fc1"
+}
+layer {
+  name: "fc2"
+  type: "InnerProduct"
+  bottom: "fc1"
+  top: "fc2"
+  inner_product_param {
+    num_output: 100
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "xavier"
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "fc2"
+  top: "fc2"
+}
+layer {
+  name: "dropout1"
+  type: "Dropout"
+  bottom: "fc2"
+  top: "fc2"
+  include {
+    phase: TRAIN
+  }
+  dropout_param {
+    dropout_ratio:0.5  
+  }
+}
+layer {
+  name: "fc3"
+  type: "InnerProduct"
+  bottom: "fc2"
+  top: "fc3"
+  inner_product_param {
+    num_output: 3
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc3"
+  bottom: "label"
+  top: "loss"
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "fc3"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "fc3"
+  top: "prob"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "argmax"
+  type: "ArgMax"
+  bottom: "fc3"
+  top: "argmax"
+  include {
+    phase: TEST
+  }
+}
