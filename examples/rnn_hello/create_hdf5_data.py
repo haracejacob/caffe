@@ -12,7 +12,7 @@ import numpy as np
 train_filename = 'rnn_data.hdf5'
 #train_filename = 'xor_data2.hdf5'
 #0:h 1:e 2:l 3:o
-data = np.array((1,0,2,1,3,2,4,2)).reshape((4,1,2))
+data = np.array((0,1,2,2)).reshape((4,1,1))
 clip = np.array((1,2,3,4)).reshape((4,1))
 labels = np.array((1, 2, 2, 3))
 
