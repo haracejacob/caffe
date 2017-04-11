@@ -28,8 +28,8 @@ layer {
   }
 }
 layer {
-  name: "relu1"
-  type: "ReLU"
+  name: "tanh1"
+  type: "TanH"
   bottom: "rnn1"
   top: "rnn1"
 }
