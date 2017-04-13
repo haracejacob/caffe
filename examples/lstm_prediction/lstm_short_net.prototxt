@@ -35,7 +35,7 @@ layer {
   bottom: "clip"
   top: "lstm1"
   recurrent_param {
-    num_output: 15 # We need to have some positive and some negative initial weights with high probability
+    num_output: 15
     weight_filler {
       type: "gaussian"
       std: 0.05

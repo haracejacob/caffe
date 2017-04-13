@@ -20,7 +20,7 @@ dataset = dataset.astype('float32')
 scaler = MinMaxScaler(feature_range=(0, 1))
 dataset = scaler.fit_transform(dataset)
 
-#data = numpy.reshape(dataset, (dataset.shape[0], 1, dataset.shape[1]))   # 94*1*1
+#data = numpy.reshape(dataset, (dataset.shape[0], 1, dataset.shape[1]))   #144*1*1
 #clip = numpy.zeros((144,1), numpy.float32)
 
 #import h5py

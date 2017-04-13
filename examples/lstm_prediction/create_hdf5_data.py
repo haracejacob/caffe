@@ -9,15 +9,19 @@ import pandas
 import numpy
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
 import h5py
 
 def create_dataset(dataset, look_back=1):
-	dataX, dataY = [], []
-	for i in range(len(dataset)-look_back-1):
-		a = dataset[i:(i+look_back), 0]
-		dataX.append(a)
-		dataY.append(dataset[i + look_back, 0])
-	return numpy.array(dataX), numpy.array(dataY)
+    dataX, dataY = [], []
+    
+    for i in range(len(dataset)-look_back-1):
+        a = dataset[i:(i+look_back), 0]
+        dataX.append(a)
+        dataY.append(dataset[i + look_back, 0])
+
+    print numpy.array(dataX).shape, numpy.array(dataY).shape
+    return numpy.array(dataX), numpy.array(dataY)
 
 # load the dataset
 dataframe = pandas.read_csv('international-airline-passengers.csv', usecols=[1], engine='python', skipfooter=3)
@@ -42,6 +46,7 @@ testX, testY = create_dataset(test, look_back)
 trainX = numpy.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))   # 94*1*1
 testX = numpy.reshape(testX, (testX.shape[0], 1, testX.shape[1]))       # 46*1*1
 
+# make clip data (cont)
 trainClip = numpy.zeros((94,1), numpy.float32)
 testClip = numpy.zeros((46,1), numpy.float32)
 
