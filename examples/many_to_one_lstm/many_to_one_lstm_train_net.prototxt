@@ -1,0 +1,116 @@
+name: "MANY_TO_ONE_LSTM_NET"
+layer {
+  name: "TrainData"
+  type: "HDF5Data"
+  top: "data"
+  #top: "label"
+  top: "clip"
+  hdf5_data_param {
+    source: "many_to_one_lstm_train.filelist.txt"
+    batch_size: 100
+  }
+  include {
+    phase: TRAIN
+  }
+}
+
+layer {
+  name: "LabelData"
+  type: "HDF5Data"
+  top: "label"
+  hdf5_data_param {
+    source: "many_to_one_lstm_train.filelist.txt"
+    batch_size: 1
+  }
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "TestData"
+  type: "HDF5Data"
+  top: "data"
+  top: "clip"
+  hdf5_data_param {
+    source: "many_to_one_lstm_train.filelist.txt"
+    batch_size: 100
+  }
+  include {
+    phase: TEST
+  }
+}
+
+layer {
+  name: "LabelData"
+  type: "HDF5Data"
+  top: "label"
+  hdf5_data_param {
+    source: "many_to_one_lstm_train.filelist.txt"
+    batch_size: 1
+  }
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "lstm1"
+  type: "LSTM"
+  bottom: "data"
+  bottom: "clip"
+  top: "lstm1"
+  recurrent_param {
+    num_output: 128
+    weight_filler {
+      type: "gaussian"
+      std: 0.05
+    }
+    bias_filler {
+      type: "constant"
+    }
+    debug_info:0
+    expose_hidden:0
+  }
+}
+layer {
+  name: "ip"
+  type: "InnerProduct"
+  bottom: "lstm1"
+  top: "ip"
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "slice"
+  type: "Slice"
+  bottom: "ip"
+  top: "useless"
+  top: "last"
+  slice_param {
+    axis: 0
+    slice_point: 99
+  }
+}
+layer {
+  name: "silence"
+  type: "Silence"
+  bottom: "useless"
+}
+
+layer {
+  name: "loss"
+  type: "EuclideanLoss"
+  bottom: "last"
+  bottom: "label"
+  top: "loss"
+  include {
+    phase: TRAIN
+  }
+}
