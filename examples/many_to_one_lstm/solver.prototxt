@@ -1,20 +1,20 @@
 net: "many_to_one_lstm_train_net.prototxt"
-#type: "SGD"
+type: "SGD"
 
-test_iter: 30
-test_interval: 10000
+test_iter: 150
+test_interval: 100
 
 base_lr: 0.001
 momentum: 0.95
 lr_policy: "fixed"
 
-display: 1000
-max_iter: 50000
-snapshot: 10000
+display: 1
+max_iter: 40000
+snapshot: 1000
 snapshot_prefix: "snapshot"
 
 solver_mode: CPU # or GPU
 
 average_loss: 200
 
-debug_info: true
+debug_info: false
