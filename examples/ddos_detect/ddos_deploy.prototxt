@@ -1,0 +1,198 @@
+name: "DDOS Detect Deploy"
+layer {
+  name: "data"
+  type: "Input"
+  top: "data_n"
+  input_param { shape: { dim: 1 dim:1 dim: 1 dim: 4 } }
+}
+layer {
+  name: "data"
+  type: "Input"
+  top: "data_c"
+  input_param { shape: { dim: 1 dim:1 dim: 1 dim: 4 } }
+}
+layer {
+  name: "data"
+  type: "Input"
+  top: "data_d"
+  input_param { shape: { dim: 1 dim:1 dim: 1 dim: 5 } }
+}
+layer {
+  name: "ip1_n"
+  type: "InnerProduct"
+  bottom: "data_n"
+  top: "ip1_n"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_n"
+  type: "ReLU"
+  bottom: "ip1_n"
+  top: "ip1_n"
+}
+layer {
+  name: "norm1_n"
+  type: "BatchNorm"
+  bottom: "ip1_n"
+  top: "norm1_n"
+}
+layer {
+  name: "ip1_c"
+  type: "InnerProduct"
+  bottom: "data_c"
+  top: "ip1_c"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_c"
+  type: "ReLU"
+  bottom: "ip1_c"
+  top: "ip1_c"
+}
+layer {
+  name: "norm1_c"
+  type: "BatchNorm"
+  bottom: "ip1_c"
+  top: "norm1_c"
+}
+layer {
+  name: "ip1_d"
+  type: "InnerProduct"
+  bottom: "data_d"
+  top: "ip1_d"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_d"
+  type: "ReLU"
+  bottom: "ip1_d"
+  top: "ip1_d"
+}
+layer {
+  name: "norm1_d"
+  type: "BatchNorm"
+  bottom: "ip1_d"
+  top: "norm1_d"
+}
+layer {
+  name: "concat"
+  bottom: "norm1_n"
+  bottom: "norm1_c"
+  bottom: "norm1_d"
+  top: "norm1_con"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "norm1_con"
+  top: "ip2"
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "ip2"
+  top: "ip2"
+}
+layer {
+  name: "norm2"
+  type: "BatchNorm"
+  bottom: "ip2"
+  top: "norm2"
+}
+layer {
+  name: "ip3"
+  type: "InnerProduct"
+  bottom: "norm2"
+  top: "ip3"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "ip3"
+  top: "ip3"
+}
+layer {
+  name: "norm3"
+  type: "BatchNorm"
+  bottom: "ip3"
+  top: "norm3"
+}
+layer {
+  name: "ip4"
+  type: "InnerProduct"
+  bottom: "norm3"
+  top: "ip4"
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "ip4"
+  top: "prob"
+}
+layer {
+  name: "argmax"
+  type: "ArgMax"
+  bottom: "ip4"
+  top: "argmax"
+}

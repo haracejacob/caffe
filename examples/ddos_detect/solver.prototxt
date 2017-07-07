@@ -1,0 +1,20 @@
+net: "./ddos_train.prototxt"
+
+test_iter: 10
+test_interval: 1000
+
+base_lr: 0.001
+gamma: 0.5
+momentum: 0.95
+weight_decay: 0.0005
+lr_policy: "step"
+stepsize: 1000
+
+display: 50
+max_iter: 15000
+snapshot: 5000
+snapshot_prefix: "ddos_detect"
+
+solver_mode: CPU #GPU
+
+#debug_info:true

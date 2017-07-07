@@ -1,0 +1,255 @@
+name: "DDOS Detect"
+layer {
+  name: "TrainData"
+  type: "HDF5Data"
+  top: "data_n"
+  top: "data_c"
+  top: "data_d"
+  top: "label"
+  hdf5_data_param {
+    source: "train.filelist.txt"
+    batch_size: 128
+  }
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "TestData"
+  type: "HDF5Data"
+  top: "data_n"
+  top: "data_c"
+  top: "data_d"
+  top: "label"
+  hdf5_data_param {
+    source: "test.filelist.txt"
+    batch_size: 128
+  }
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "ip1_n"
+  type: "InnerProduct"
+  bottom: "data_n"
+  top: "ip1_n"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_n"
+  type: "ReLU"
+  bottom: "ip1_n"
+  top: "ip1_n"
+}
+layer {
+  name: "norm1_n"
+  type: "BatchNorm"
+  bottom: "ip1_n"
+  top: "norm1_n"
+}
+layer {
+  name: "ip1_c"
+  type: "InnerProduct"
+  bottom: "data_c"
+  top: "ip1_c"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_c"
+  type: "ReLU"
+  bottom: "ip1_c"
+  top: "ip1_c"
+}
+layer {
+  name: "norm1_c"
+  type: "BatchNorm"
+  bottom: "ip1_c"
+  top: "norm1_c"
+}
+layer {
+  name: "ip1_d"
+  type: "InnerProduct"
+  bottom: "data_d"
+  top: "ip1_d"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_d"
+  type: "ReLU"
+  bottom: "ip1_d"
+  top: "ip1_d"
+}
+layer {
+  name: "norm1_d"
+  type: "BatchNorm"
+  bottom: "ip1_d"
+  top: "norm1_d"
+}
+layer {
+  name: "concat"
+  bottom: "norm1_n"
+  bottom: "norm1_c"
+  bottom: "norm1_d"
+  top: "norm1_con"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "norm1_con"
+  top: "ip2"
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "ip2"
+  top: "ip2"
+}
+layer {
+  name: "norm2"
+  type: "BatchNorm"
+  bottom: "ip2"
+  top: "norm2"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "norm2"
+  top: "norm2"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "ip3"
+  type: "InnerProduct"
+  bottom: "norm2"
+  top: "ip3"
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "ip3"
+  top: "ip3"
+}
+layer {
+  name: "norm3"
+  type: "BatchNorm"
+  bottom: "ip3"
+  top: "norm3"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "norm3"
+  top: "norm3"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "ip4"
+  type: "InnerProduct"
+  bottom: "norm3"
+  top: "ip4"
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip4"
+  bottom: "label"
+  top: "loss"
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip4"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "ip4"
+  top: "prob"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "argmax"
+  type: "ArgMax"
+  bottom: "ip4"
+  top: "argmax"
+  include {
+    phase: TEST
+  }
+}
+
